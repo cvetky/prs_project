@@ -8,12 +8,16 @@
 
 var x;
 var y;
+
+
 navigator.geolocation.getCurrentPosition(getPosition);
+
+var mymap;
 
 function getPosition(position){
     x=position.coords.latitude
     y=position.coords.longitude
-    var mymap = L.map('mapid').setView([x, y], 13);
+    mymap = L.map('mapid').setView([x, y], 13);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -25,7 +29,7 @@ function getPosition(position){
     L.marker([x, y]).addTo(mymap).bindPopup('You are currently here.').openPopup();
 
 
-    const request = new Request("https://samples.openweathermap.org/data/2.5/weather?lat=" + x + "&lon=" + y + "&appid=8d50b46972b36311b1bdd74f434be1b0");
+    const request = new Request("https://cors-anywhere.herokuapp.com/api.openweathermap.org/data/2.5/weather?lat="+x+"&lon="+y+"&APPID=8d50b46972b36311b1bdd74f434be1b0");
     
     const gosho = fetch(request).then(response => {
         if (response.status === 200) {
@@ -33,4 +37,26 @@ function getPosition(position){
             return response.json();
         }
     });
+}
+
+function move_to_postion(latitude,longtitude){
+    x=latitude
+    y=longtitude
+    mymap.setView([latitude, longtitude], 13);
+
+    //var url = "https://samples.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longtitude + "&appid=8d50b46972b36311b1bdd74f434be1b0"
+    //url ="https://cors-anywhere.herokuapp.com/api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longtitude+"&APPID=8d50b46972b36311b1bdd74f434be1b0"
+    var url = "http://127.0.0.1:5000/?latitude=" + latitude + "&longtitude=" + longtitude
+    var response = send_request(url, pasteDataOnMap);
+}
+
+function pasteDataOnMap(response){
+    console.log(response);
+    var weather = response["main"];
+
+    var temperature = weather["temp"];
+    var pressure = weather["pressure"];
+    var humidity = weather["humidity"];
+    
+    L.marker([x, y]).addTo(mymap).bindPopup('Temperature : ' +temperature+", Presure : " + pressure + ", Humidity : "+ humidity).openPopup();
 }

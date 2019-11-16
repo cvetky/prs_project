@@ -144,6 +144,7 @@ function fetch_selected_city_coordinates(selected_city, selected_city_id) {
         var city_longitude = city_location_json.longitude
         console.log(city_latitude)
         console.log(city_longitude)
+        move_to_postion(city_latitude,city_longitude);
         // Now use these coordinates to fetch weather forecast for the city and display it on the map!
     })
 }
